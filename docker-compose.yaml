@@ -7,6 +7,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=app_db
+    command: ["postgres", "-c", "log_statement=all"]
+    
   redis:
     image: redis:latest
   
@@ -14,3 +16,7 @@ services:
     build: .
     environment:
       - DATABASE_URL=postgres://postgres:postgres@postgres/app_db
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/app/
