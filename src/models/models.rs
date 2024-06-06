@@ -1,8 +1,9 @@
 use crate::schema::*;
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
+use serde::Serialize;
 
-#[derive(Queryable)]
+#[derive(Queryable, AsChangeset, Serialize)]
 pub struct Rustacean {
     pub id: i32,
     pub name: String,
