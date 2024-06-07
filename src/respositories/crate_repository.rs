@@ -28,8 +28,12 @@ impl CratesRespository {
             .await
     }
 
-    pub async fn update(connection: &mut AsyncPgConnection, a_crate: Crate) -> QueryResult<Crate> {
-        diesel::update(crates::table.find(a_crate.id))
+    pub async fn update(
+        connection: &mut AsyncPgConnection,
+        id: i32,
+        a_crate: Crate,
+    ) -> QueryResult<Crate> {
+        diesel::update(crates::table.find(id))
             .set((
                 crates::name.eq(a_crate.name),
                 crates::rustaceans_id.eq(a_crate.rustaceans_id),
