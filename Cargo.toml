@@ -12,3 +12,7 @@ diesel = { version = "2.1", features = ["chrono"] }
 diesel-async = { version = "0.4", features = ["postgres"] }
 chrono = { version = "0.4.38", features = ["serde"] }
 serde = "1.0.203"
+
+
+[dev-dependencies]
+reqwest = { version = "0.12.4", features = ["json", "blocking"] }
