@@ -18,7 +18,6 @@ pub async fn get_crates(
     mut db_connection: Connection<DbConnection>,
 ) -> Result<Value, Custom<Value>> {
     let limit = 100;
-
     CratesRespository::find_multiple(&mut db_connection, limit)
         .await
         .map(|a_crate| json!(a_crate))
