@@ -1,4 +1,4 @@
-use respositories::repositories::RustaceanRepository;
+use respositories::rustacean_respository::RustaceanRepository;
 use rocket::{
     http::Status,
     response::status::Custom,
@@ -8,6 +8,7 @@ use rocket_db_pools::{Connection, Database};
 
 mod models;
 mod respositories;
+mod routes;
 mod schema;
 
 #[derive(Database)]
