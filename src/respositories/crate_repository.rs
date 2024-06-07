@@ -11,7 +11,7 @@ impl CratesRespository {
         crates::table.find(id).get_result(connection).await
     }
 
-    pub async fn get_multiple(
+    pub async fn find_multiple(
         connection: &mut AsyncPgConnection,
         limit: i64,
     ) -> QueryResult<Vec<Crate>> {
