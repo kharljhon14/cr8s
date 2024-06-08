@@ -1,6 +1,21 @@
 use reqwest::{blocking::Client, StatusCode};
 use rocket::serde::json::{serde_json::json, Value};
 
+fn create_test_rustacean(client: &Client) -> Value {
+    let response = client
+        .post("http://127.0.0.1:8000/rustaceans")
+        .json(&json!({
+            "name": "Foo bar",
+            "email": "foobar@gmail.com"
+        }))
+        .send()
+        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
+
+    assert_eq!(response.status(), StatusCode::CREATED);
+
+    response.json().unwrap()
+}
+
 #[test]
 fn test_get_rustaceans() {
     let client = Client::new();
@@ -42,18 +57,7 @@ fn test_create_rustacean() {
 #[test]
 fn test_get_rustacean() {
     let client = Client::new();
-    let response = client
-        .post("http://127.0.0.1:8000/rustaceans")
-        .json(&json!({
-            "name": "Foo bar",
-            "email": "foobar@gmail.com"
-        }))
-        .send()
-        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
-
-    assert_eq!(response.status(), StatusCode::CREATED);
-
-    let rustacean: Value = response.json().unwrap();
+    let rustacean = create_test_rustacean(&client);
 
     let response = client
         .get(format!(
@@ -79,18 +83,7 @@ fn test_get_rustacean() {
 #[test]
 fn test_update_rustacean() {
     let client = Client::new();
-    let response = client
-        .post("http://127.0.0.1:8000/rustaceans")
-        .json(&json!({
-            "name": "Foo bar",
-            "email": "foobar@gmail.com"
-        }))
-        .send()
-        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
-
-    assert_eq!(response.status(), StatusCode::CREATED);
-
-    let rustacean: Value = response.json().unwrap();
+    let rustacean = create_test_rustacean(&client);
 
     let response = client
         .put(format!(
@@ -122,18 +115,7 @@ fn test_update_rustacean() {
 #[test]
 fn test_delete_rustacean() {
     let client = Client::new();
-    let response = client
-        .post("http://127.0.0.1:8000/rustaceans")
-        .json(&json!({
-            "name": "Foo bar",
-            "email": "foobar@gmail.com"
-        }))
-        .send()
-        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
-
-    assert_eq!(response.status(), StatusCode::CREATED);
-
-    let rustacean: Value = response.json().unwrap();
+    let rustacean = create_test_rustacean(&client);
 
     let response = client
         .delete(format!(
