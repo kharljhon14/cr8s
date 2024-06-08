@@ -118,3 +118,34 @@ fn test_update_rustacean() {
         })
     );
 }
+
+#[test]
+fn test_delete_rustacean() {
+    let client = Client::new();
+    let response = client
+        .post("http://127.0.0.1:8000/rustaceans")
+        .json(&json!({
+            "name": "Foo bar",
+            "email": "foobar@gmail.com"
+        }))
+        .send()
+        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
+
+    assert_eq!(response.status(), StatusCode::CREATED);
+
+    let rustacean: Value = response.json().unwrap();
+
+    let response = client
+        .delete(format!(
+            "http://127.0.0.1:8000/rustaceans/{}",
+            rustacean["id"]
+        ))
+        .json(&json!({
+            "name": "Foo BAR",
+            "email": "fooobar@mail.com"
+        }))
+        .send()
+        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
+
+    assert_eq!(response.status(), StatusCode::NO_CONTENT);
+}
