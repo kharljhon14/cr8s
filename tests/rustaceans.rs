@@ -16,6 +16,18 @@ fn create_test_rustacean(client: &Client) -> Value {
     response.json().unwrap()
 }
 
+fn delete_test_rustacean(client: &Client, rustacean: Value) {
+    let response = client
+        .delete(format!(
+            "http://127.0.0.1:8000/rustaceans/{}",
+            rustacean["id"]
+        ))
+        .send()
+        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
+
+    assert_eq!(response.status(), StatusCode::NO_CONTENT);
+}
+
 #[test]
 fn test_get_rustaceans() {
     let client = Client::new();
@@ -31,6 +43,8 @@ fn test_get_rustaceans() {
     let json: Value = response.json().unwrap();
 
     assert!(json.as_array().unwrap().contains(&rustacean));
+
+    delete_test_rustacean(&client, rustacean)
 }
 
 #[test]
@@ -58,6 +72,7 @@ fn test_create_rustacean() {
             "created_at": rustacean["created_at"],
         })
     );
+    delete_test_rustacean(&client, rustacean)
 }
 
 #[test]
@@ -84,6 +99,7 @@ fn test_get_rustacean() {
             "created_at": rustacean["created_at"],
         })
     );
+    delete_test_rustacean(&client, rustacean)
 }
 
 #[test]
@@ -116,6 +132,7 @@ fn test_update_rustacean() {
             "created_at": rustacean["created_at"],
         })
     );
+    delete_test_rustacean(&client, rustacean)
 }
 
 #[test]
@@ -128,10 +145,6 @@ fn test_delete_rustacean() {
             "http://127.0.0.1:8000/rustaceans/{}",
             rustacean["id"]
         ))
-        .json(&json!({
-            "name": "Foo BAR",
-            "email": "fooobar@mail.com"
-        }))
         .send()
         .unwrap_or_else(|err| panic!("Request failed {:?}", err));
 
