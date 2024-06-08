@@ -19,12 +19,18 @@ fn create_test_rustacean(client: &Client) -> Value {
 #[test]
 fn test_get_rustaceans() {
     let client = Client::new();
+    let rustacean = create_test_rustacean(&client);
+
     let response = client
         .get("http://127.0.0.1:8000/rustaceans")
         .send()
         .unwrap_or_else(|err| panic!("Request failed {:?}", err));
 
     assert_eq!(response.status(), StatusCode::OK);
+
+    let json: Value = response.json().unwrap();
+
+    assert!(json.as_array().unwrap().contains(&rustacean));
 }
 
 #[test]
