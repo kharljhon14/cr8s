@@ -94,3 +94,43 @@ fn test_get_crate() {
     common::delete_test_crate(&client, a_crate);
     common::delete_test_rustacean(&client, rustacean);
 }
+
+#[test]
+fn test_update_crate() {
+    let client = Client::new();
+    let rustacean = common::create_test_rustacean(&client);
+
+    let a_crate = common::create_test_crate(&client, &rustacean);
+
+    let response = client
+        .put(format!("{}/crates/{}", APP_HOST, a_crate["id"]))
+        .json(&json!({
+            "rustaceans_id": rustacean["id"],
+            "code": "Foozz",
+            "name": "Crate",
+            "version": "0.1",
+            "description": "Crate description"
+        }))
+        .send()
+        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
+
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let a_crate: Value = response.json().unwrap();
+
+    assert_eq!(
+        a_crate,
+        json!({
+            "id": a_crate["id"],
+            "code": "Foozz",
+            "name": "Crate",
+            "version": "0.1",
+            "description": "Crate description",
+            "rustaceans_id": rustacean["id"],
+            "created_at": a_crate["created_at"]
+        })
+    );
+
+    common::delete_test_crate(&client, a_crate);
+    common::delete_test_rustacean(&client, rustacean);
+}

@@ -24,7 +24,6 @@ pub struct NewRustacean {
 pub struct Crate {
     #[serde(skip_deserializing)]
     pub id: i32,
-    #[serde(skip_deserializing)]
     pub rustaceans_id: i32,
     pub code: String,
     pub name: String,
