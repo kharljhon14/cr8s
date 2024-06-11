@@ -1,5 +1,6 @@
 use common::APP_HOST;
 use reqwest::{blocking::Client, StatusCode};
+use rocket::form::validate::Contains;
 use serde_json::{json, Value};
 
 pub mod common;
@@ -35,6 +36,27 @@ fn test_create_crate() {
             "created_at": a_crate["created_at"]
         })
     );
+
+    common::delete_test_crate(&client, a_crate);
+    common::delete_test_rustacean(&client, rustacean);
+}
+
+#[test]
+fn test_get_crates() {
+    let client = Client::new();
+    let rustacean = common::create_test_rustacean(&client);
+    let a_crate = common::create_test_crate(&client, &rustacean);
+
+    let response = client
+        .get(format!("{}/crates", APP_HOST))
+        .send()
+        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
+
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let json: Value = response.json().unwrap();
+
+    assert!(json.as_array().contains(&a_crate));
 
     common::delete_test_crate(&client, a_crate);
     common::delete_test_rustacean(&client, rustacean);
