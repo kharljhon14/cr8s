@@ -3,6 +3,8 @@ use serde_json::{json, Value};
 
 pub static APP_HOST: &'static str = "http://127.0.0.1:8000";
 
+// Rustaceans common functions
+
 pub fn create_test_rustacean(client: &Client) -> Value {
     let response = client
         .post(format!("{}/rustaceans", APP_HOST))
@@ -21,6 +23,17 @@ pub fn create_test_rustacean(client: &Client) -> Value {
 pub fn delete_test_rustacean(client: &Client, rustacean: Value) {
     let response = client
         .delete(format!("{}/rustaceans/{}", APP_HOST, rustacean["id"]))
+        .send()
+        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
+
+    assert_eq!(response.status(), StatusCode::NO_CONTENT);
+}
+
+// Crates common functions
+
+pub fn delete_test_crate(client: &Client, a_crate: Value) {
+    let response = client
+        .delete(format!("{}/crates/{}", APP_HOST, a_crate["id"]))
         .send()
         .unwrap_or_else(|err| panic!("Request failed {:?}", err));
 
