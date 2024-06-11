@@ -1,32 +1,8 @@
+use common::{create_test_rustacean, delete_test_rustacean, APP_HOST};
 use reqwest::{blocking::Client, StatusCode};
-use rocket::serde::json::{serde_json::json, Value};
+use serde_json::{json, Value};
 
-fn create_test_rustacean(client: &Client) -> Value {
-    let response = client
-        .post("http://127.0.0.1:8000/rustaceans")
-        .json(&json!({
-            "name": "Foo bar",
-            "email": "foobar@gmail.com"
-        }))
-        .send()
-        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
-
-    assert_eq!(response.status(), StatusCode::CREATED);
-
-    response.json().unwrap()
-}
-
-fn delete_test_rustacean(client: &Client, rustacean: Value) {
-    let response = client
-        .delete(format!(
-            "http://127.0.0.1:8000/rustaceans/{}",
-            rustacean["id"]
-        ))
-        .send()
-        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
-
-    assert_eq!(response.status(), StatusCode::NO_CONTENT);
-}
+mod common;
 
 #[test]
 fn test_get_rustaceans() {
@@ -34,7 +10,7 @@ fn test_get_rustaceans() {
     let rustacean = create_test_rustacean(&client);
 
     let response = client
-        .get("http://127.0.0.1:8000/rustaceans")
+        .get(format!("{}/rustaceans", APP_HOST))
         .send()
         .unwrap_or_else(|err| panic!("Request failed {:?}", err));
 
@@ -51,7 +27,7 @@ fn test_get_rustaceans() {
 fn test_create_rustacean() {
     let client = Client::new();
     let response = client
-        .post("http://127.0.0.1:8000/rustaceans")
+        .post(format!("{}/rustaceans", APP_HOST))
         .json(&json!({
             "name": "Foo bar",
             "email": "foobar@gmail.com"
@@ -81,10 +57,7 @@ fn test_get_rustacean() {
     let rustacean = create_test_rustacean(&client);
 
     let response = client
-        .get(format!(
-            "http://127.0.0.1:8000/rustaceans/{}",
-            rustacean["id"]
-        ))
+        .get(format!("{}/rustaceans/{}", APP_HOST, rustacean["id"]))
         .send()
         .unwrap_or_else(|err| panic!("Request failed {:?}", err));
 
@@ -108,10 +81,7 @@ fn test_update_rustacean() {
     let rustacean = create_test_rustacean(&client);
 
     let response = client
-        .put(format!(
-            "http://127.0.0.1:8000/rustaceans/{}",
-            rustacean["id"]
-        ))
+        .put(format!("{}/rustaceans/{}", APP_HOST, rustacean["id"]))
         .json(&json!({
             "name": "Foo BAR",
             "email": "fooobar@mail.com"
@@ -141,10 +111,7 @@ fn test_delete_rustacean() {
     let rustacean = create_test_rustacean(&client);
 
     let response = client
-        .delete(format!(
-            "http://127.0.0.1:8000/rustaceans/{}",
-            rustacean["id"]
-        ))
+        .delete(format!("{}/rustaceans/{}", APP_HOST, rustacean["id"]))
         .send()
         .unwrap_or_else(|err| panic!("Request failed {:?}", err));
 
