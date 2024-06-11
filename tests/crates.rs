@@ -134,3 +134,19 @@ fn test_update_crate() {
     common::delete_test_crate(&client, a_crate);
     common::delete_test_rustacean(&client, rustacean);
 }
+
+#[test]
+fn test_delete_crate() {
+    let client = Client::new();
+    let rustacean = common::create_test_rustacean(&client);
+    let a_crate = common::create_test_crate(&client, &rustacean);
+
+    let response = client
+        .delete(format!("{}/crates/{}", APP_HOST, a_crate["id"]))
+        .send()
+        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
+
+    assert_eq!(response.status(), StatusCode::NO_CONTENT);
+
+    common::delete_test_rustacean(&client, rustacean);
+}
