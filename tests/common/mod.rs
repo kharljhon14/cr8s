@@ -31,6 +31,24 @@ pub fn delete_test_rustacean(client: &Client, rustacean: Value) {
 
 // Crates common functions
 
+pub fn create_test_crate(client: &Client, rustacean: &Value) -> Value {
+    let response = client
+        .post(format!("{}/crates", APP_HOST))
+        .json(&json!({
+            "rustaceans_id": rustacean["id"],
+            "code": "Foo",
+            "name": "Crate",
+            "version": "0.1",
+            "description": "Crate description"
+        }))
+        .send()
+        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
+
+    assert_eq!(response.status(), StatusCode::CREATED);
+
+    response.json().unwrap()
+}
+
 pub fn delete_test_crate(client: &Client, a_crate: Value) {
     let response = client
         .delete(format!("{}/crates/{}", APP_HOST, a_crate["id"]))
