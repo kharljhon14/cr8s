@@ -131,6 +131,22 @@ fn test_update_crate() {
         })
     );
 
+    // Test author switching
+
+    let response = client
+        .put(format!("{}/crates/{}", APP_HOST, a_crate["id"]))
+        .json(&json!({
+            "rustaceans_id": 9999,
+            "code": "Foozz",
+            "name": "Crate",
+            "version": "0.1",
+            "description": "Crate description"
+        }))
+        .send()
+        .unwrap_or_else(|err| panic!("Request failed {:?}", err));
+
+    assert_eq!(response.status(), StatusCode::OK);
+
     common::delete_test_crate(&client, a_crate);
     common::delete_test_rustacean(&client, rustacean);
 }
