@@ -8,7 +8,7 @@ use rocket_db_pools::Connection;
 use crate::{
     models::rustaceans::{NewRustacean, Rustacean},
     respositories::rustacean_respository::RustaceanRepository,
-    DbConnection,
+    routes::DbConnection,
 };
 
 use super::server_error;
