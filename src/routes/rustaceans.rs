@@ -11,6 +11,8 @@ use crate::{
     DbConnection,
 };
 
+use super::server_error;
+
 // Todo: Update error messages
 
 // Get multiple rustaceans endpoint
@@ -24,7 +26,7 @@ pub async fn get_rustaceans(
     RustaceanRepository::find_multiple(&mut db_connection, limit)
         .await
         .map(|rustacean| json!(rustacean))
-        .map_err(|_error| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|error| server_error(Box::new(error)))
 }
 
 // Get rustacean endpoint
@@ -37,7 +39,7 @@ pub async fn get_rustacean(
     RustaceanRepository::find(&mut db_connection, id)
         .await
         .map(|rustacean| json!(rustacean))
-        .map_err(|_error| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|error| server_error(Box::new(error)))
 }
 
 // Create rustacean endpoint
@@ -50,7 +52,7 @@ pub async fn create_rustacean(
     RustaceanRepository::create(&mut db_connection, new_rustacean.into_inner())
         .await
         .map(|rustacean| Custom(Status::Created, json!(rustacean)))
-        .map_err(|_error| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|error| server_error(Box::new(error)))
 }
 
 // Update rustacean endpoint
@@ -64,7 +66,7 @@ pub async fn update_rustacean(
     RustaceanRepository::update(&mut db_connection, id, rustacean.into_inner())
         .await
         .map(|rustacean| json!(rustacean))
-        .map_err(|_error| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|error| server_error(Box::new(error)))
 }
 
 // Delete rustacean endpoint
@@ -77,5 +79,5 @@ pub async fn delete_rustacean(
     RustaceanRepository::delete(&mut db_connection, id)
         .await
         .map(|_| NoContent)
-        .map_err(|_error| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|error| server_error(Box::new(error)))
 }
