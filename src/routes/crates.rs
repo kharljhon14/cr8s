@@ -8,7 +8,7 @@ use rocket_db_pools::Connection;
 use crate::{
     models::crates::{Crate, NewCrate},
     respositories::crate_repository::CratesRespository,
-    DbConnection,
+    routes::DbConnection,
 };
 
 use super::server_error;

@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 use crate::schema::users_roles;
 
 #[derive(Queryable, Serialize, Deserialize)]
+#[diesel(belongs_to(User))]
+#[diesel(belongs_to(Role))]
 pub struct UserRole {
     pub id: i32,
     pub user_id: i32,
