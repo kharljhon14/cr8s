@@ -6,7 +6,7 @@ use rocket::{
 use rocket_db_pools::Connection;
 
 use crate::{
-    models::models::{Crate, NewCrate},
+    models::crates::{Crate, NewCrate},
     respositories::crate_repository::CratesRespository,
     DbConnection,
 };
