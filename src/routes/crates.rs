@@ -11,6 +11,8 @@ use crate::{
     DbConnection,
 };
 
+use super::server_error;
+
 // Get mutliple crates endpoint
 
 #[rocket::get("/crates")]
@@ -21,7 +23,7 @@ pub async fn get_crates(
     CratesRespository::find_multiple(&mut db_connection, limit)
         .await
         .map(|a_crate| json!(a_crate))
-        .map_err(|_error| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|error| server_error(Box::new(error)))
 }
 
 // Get crate endpoint
@@ -34,7 +36,7 @@ pub async fn get_crate(
     CratesRespository::find(&mut db_connection, id)
         .await
         .map(|a_crate| json!(a_crate))
-        .map_err(|_error| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|error| server_error(Box::new(error)))
 }
 
 // Create crate endpoint
@@ -47,7 +49,7 @@ pub async fn create_crate(
     CratesRespository::create(&mut db_connection, new_crate.into_inner())
         .await
         .map(|a_crate| Custom(Status::Created, json!(a_crate)))
-        .map_err(|_error| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|error| server_error(Box::new(error)))
 }
 
 // Update crate endpoint
@@ -61,7 +63,7 @@ pub async fn update_crate(
     CratesRespository::update(&mut db_connection, id, a_crate.into_inner())
         .await
         .map(|a_crate| json!(a_crate))
-        .map_err(|_error| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|error| server_error(Box::new(error)))
 }
 
 // Delete crate endpoint
@@ -74,5 +76,5 @@ pub async fn delete_crate(
     CratesRespository::delete(&mut db_connection, id)
         .await
         .map(|_| NoContent)
-        .map_err(|_error| Custom(Status::InternalServerError, json!("Error")))
+        .map_err(|error| server_error(Box::new(error)))
 }
