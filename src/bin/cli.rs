@@ -35,9 +35,26 @@ fn main() {
 
     match matches.subcommand() {
         Some(("users", sub_matches)) => match sub_matches.subcommand() {
-            Some(("create", _)) => {}
-            Some(("list", _)) => {}
-            Some(("delete", _)) => {}
+            Some(("create", sub_matches)) => cr8s::commands::create_user(
+                sub_matches
+                    .get_one::<String>("username")
+                    .unwrap()
+                    .to_owned(),
+                sub_matches
+                    .get_one::<String>("password")
+                    .unwrap()
+                    .to_owned(),
+                sub_matches
+                    .get_many::<String>("roles")
+                    .unwrap()
+                    .map(|v| v.to_owned())
+                    .collect(),
+            ),
+            Some(("list", _)) => cr8s::commands::list_users(),
+            Some(("delete", sub_matches)) => cr8s::commands::delete_user(
+                sub_matches.get_one::<i32>("username").unwrap().to_owned(),
+            ),
+
             _ => {}
         },
         _ => {}
