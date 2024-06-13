@@ -14,13 +14,17 @@ pub async fn create_user(username: String, password: String, role_codes: Vec<Str
     let mut connection = load_db_connection().await;
 
     let new_user = NewUser { username, password };
-    UserRepository::create(&connection, new_user);
+
+    let user = UserRepository::create(&mut connection, new_user)
+        .await
+        .unwrap();
+    println!("User created {:?}", user);
 }
 
 pub async fn list_users() {
-    let connection = load_db_connection().await;
+    let mut connection = load_db_connection().await;
 }
 
 pub async fn delete_user(id: i32) {
-    let connection = load_db_connection().await;
+    let mut connection = load_db_connection().await;
 }
