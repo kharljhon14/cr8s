@@ -15,7 +15,7 @@ pub async fn create_user(username: String, password: String, role_codes: Vec<Str
 
     let new_user = NewUser { username, password };
 
-    let user = UserRepository::create(&mut connection, new_user)
+    let user = UserRepository::create(&mut connection, new_user, role_codes)
         .await
         .unwrap();
     println!("User created {:?}", user);

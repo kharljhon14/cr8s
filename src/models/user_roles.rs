@@ -1,12 +1,18 @@
-use diesel::deserialize::Queryable;
+use diesel::{
+    associations::{Associations, Identifiable},
+    deserialize::Queryable,
+};
 use rocket_db_pools::diesel::Insertable;
 use serde::{Deserialize, Serialize};
 
 use crate::schema::users_roles;
 
-#[derive(Queryable, Serialize, Deserialize)]
+use super::{roles::Role, users::User};
+
+#[derive(Queryable, Associations, Identifiable, Serialize, Deserialize)]
 #[diesel(belongs_to(User))]
 #[diesel(belongs_to(Role))]
+#[diesel(table_name=users_roles)]
 pub struct UserRole {
     pub id: i32,
     pub user_id: i32,

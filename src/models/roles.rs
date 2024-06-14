@@ -1,11 +1,11 @@
 use chrono::NaiveDateTime;
-use diesel::deserialize::Queryable;
+use diesel::{associations::Identifiable, deserialize::Queryable};
 use rocket_db_pools::diesel::Insertable;
 use serde::{Deserialize, Serialize};
 
 use crate::schema::roles;
 
-#[derive(Queryable, Serialize, Deserialize)]
+#[derive(Queryable, Identifiable, Serialize, Deserialize)]
 pub struct Role {
     pub id: i32,
     pub code: String,
