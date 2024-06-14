@@ -1,6 +1,9 @@
 use diesel_async::{AsyncConnection, AsyncPgConnection};
 
-use crate::{models::users::NewUser, respositories::user_repository::UserRepository};
+use crate::{
+    models::users::NewUser,
+    respositories::{role_repository::RoleRepository, user_repository::UserRepository},
+};
 
 async fn load_db_connection() -> AsyncPgConnection {
     let database_url = std::env::var("DATABASE_URL").expect("Cannot retrived DB url from env");
@@ -19,6 +22,10 @@ pub async fn create_user(username: String, password: String, role_codes: Vec<Str
         .await
         .unwrap();
     println!("User created {:?}", user);
+    let roles = RoleRepository::find_by_user(&mut connection, &user)
+        .await
+        .unwrap();
+    println!("Roles assigned {:?}", roles);
 }
 
 pub async fn list_users() {
