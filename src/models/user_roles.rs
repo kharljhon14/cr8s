@@ -9,7 +9,7 @@ use crate::schema::users_roles;
 
 use super::{roles::Role, users::User};
 
-#[derive(Queryable, Associations, Identifiable, Serialize, Deserialize)]
+#[derive(Queryable, Associations, Identifiable, Serialize, Deserialize, Debug)]
 #[diesel(belongs_to(User))]
 #[diesel(belongs_to(Role))]
 #[diesel(table_name=users_roles)]
