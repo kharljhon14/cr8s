@@ -1,13 +1,13 @@
-use diesel::QueryResult;
+use diesel::{GroupedBy, QueryDsl, QueryResult};
 use diesel_async::{AsyncPgConnection, RunQueryDsl};
 
 use crate::{
     models::{
-        roles::NewRole,
+        roles::{NewRole, Role},
         user_roles::{NewUserRole, UserRole},
         users::{NewUser, User},
     },
-    schema::{users, users_roles},
+    schema::{roles, users, users_roles},
 };
 
 use super::role_repository::RoleRepository;
@@ -15,6 +15,19 @@ use super::role_repository::RoleRepository;
 pub struct UserRepository;
 
 impl UserRepository {
+    pub async fn find_with_roles(
+        connection: &mut AsyncPgConnection,
+    ) -> QueryResult<Vec<(User, Vec<(UserRole, Role)>)>> {
+        let users = users::table.load::<User>(connection).await?;
+        let results = users_roles::table
+            .inner_join(roles::table)
+            .load::<(UserRole, Role)>(connection)
+            .await?
+            .grouped_by(&users);
+
+        Ok(users.into_iter().zip(results).collect())
+    }
+
     pub async fn create(
         connection: &mut AsyncPgConnection,
         new_user: NewUser,
