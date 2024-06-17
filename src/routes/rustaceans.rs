@@ -6,7 +6,7 @@ use rocket::{
 use rocket_db_pools::Connection;
 
 use crate::{
-    helpers::route_errors::{server_error, DbConnection},
+    helpers::route::{server_error, DbConnection},
     models::rustaceans::{NewRustacean, Rustacean},
     respositories::rustacean_repository::RustaceanRepository,
 };

@@ -5,7 +5,7 @@ use serde_json::{json, Value};
 use crate::{
     helpers::{
         auth::{authorize_user, Credentials},
-        route_errors::{server_error, DbConnection},
+        route::{server_error, DbConnection},
     },
     respositories::user_repository::UserRepository,
 };
