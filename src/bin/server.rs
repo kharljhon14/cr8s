@@ -21,7 +21,8 @@ async fn main() {
                 cr8s::routes::crates::delete_crate
             ],
         )
-        .attach(cr8s::helpers::route_errors::DbConnection::init())
+        .attach(cr8s::helpers::route::CacheConnection::init())
+        .attach(cr8s::helpers::route::DbConnection::init())
         .launch()
         .await;
 }
