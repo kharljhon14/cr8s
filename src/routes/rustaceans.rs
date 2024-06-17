@@ -6,12 +6,10 @@ use rocket::{
 use rocket_db_pools::Connection;
 
 use crate::{
+    helpers::route_errors::{server_error, DbConnection},
     models::rustaceans::{NewRustacean, Rustacean},
     respositories::rustacean_repository::RustaceanRepository,
-    routes::DbConnection,
 };
-
-use super::server_error;
 
 // Todo: Update error messages
 

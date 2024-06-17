@@ -6,12 +6,10 @@ use rocket::{
 use rocket_db_pools::Connection;
 
 use crate::{
+    helpers::route_errors::{server_error, DbConnection},
     models::crates::{Crate, NewCrate},
     respositories::crate_repository::CratesRespository,
-    routes::DbConnection,
 };
-
-use super::server_error;
 
 // Get mutliple crates endpoint
 
