@@ -35,12 +35,18 @@ pub async fn list_users() {
         .await
         .unwrap();
 
-    for user in users {
-        println!("{:?}", user)
+    if users.is_empty() {
+        println!("No current users");
+    } else {
+        for user in users {
+            println!("{:?}", user)
+        }
     }
 }
 
 pub async fn delete_user(id: i32) {
     let mut connection = load_db_connection().await;
     UserRepository::delete(&mut connection, id).await.unwrap();
+
+    println!("User with ID: {} is deleted", id);
 }
