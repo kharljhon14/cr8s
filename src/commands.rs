@@ -42,4 +42,5 @@ pub async fn list_users() {
 
 pub async fn delete_user(id: i32) {
     let mut connection = load_db_connection().await;
+    UserRepository::delete(&mut connection, id).await.unwrap();
 }
