@@ -5,7 +5,7 @@ use serde_json::{json, Value};
 use crate::{
     helpers::{
         auth::{authorize_user, Credentials},
-        route::{server_error, DbConnection},
+        route::{server_error, CacheConnection, DbConnection},
     },
     respositories::user_repository::UserRepository,
 };
@@ -13,6 +13,7 @@ use crate::{
 #[rocket::post("/login", format = "json", data = "<credentials>")]
 pub async fn login(
     mut db_connection: Connection<DbConnection>,
+    mut _cache_connection: Connection<CacheConnection>,
     credentials: Json<Credentials>,
 ) -> Result<Value, Custom<Value>> {
     UserRepository::find_by_username(&mut db_connection, &credentials.username)
