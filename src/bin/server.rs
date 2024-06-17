@@ -1,6 +1,6 @@
-use rocket_db_pools::Database;
-
 extern crate cr8s;
+
+use rocket_db_pools::Database;
 
 #[rocket::main]
 async fn main() {
@@ -20,7 +20,7 @@ async fn main() {
                 cr8s::routes::crates::delete_crate
             ],
         )
-        .attach(cr8s::routes::DbConnection::init())
+        .attach(cr8s::helpers::route_errors::DbConnection::init())
         .launch()
         .await;
 }
