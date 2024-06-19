@@ -1,5 +1,5 @@
-use rocket::{response::status::Custom, serde::json::Json};
-use rocket_db_pools::Connection;
+use rocket::{http::Status, response::status::Custom, serde::json::Json};
+use rocket_db_pools::{deadpool_redis::redis::AsyncCommands, Connection};
 use serde_json::{json, Value};
 
 use crate::{
@@ -13,16 +13,22 @@ use crate::{
 #[rocket::post("/login", format = "json", data = "<credentials>")]
 pub async fn login(
     mut db_connection: Connection<DbConnection>,
-    mut _cache_connection: Connection<CacheConnection>,
+    mut cache_connection: Connection<CacheConnection>,
     credentials: Json<Credentials>,
 ) -> Result<Value, Custom<Value>> {
-    UserRepository::find_by_username(&mut db_connection, &credentials.username)
+    let user = UserRepository::find_by_username(&mut db_connection, &credentials.username)
         .await
-        .map(|user| {
-            if let Ok(token) = authorize_user(&user, credentials.into_inner()) {
-                return json!(token);
-            }
-            return json!("Unauthorized");
-        })
-        .map_err(|error| server_error(Box::new(error)))
+        .map_err(|error| server_error(Box::new(error)))?;
+
+    let session_id = authorize_user(&user, credentials.into_inner())
+        .map_err(|_| Custom(Status::Unauthorized, json!("Invalid credentials")))?;
+
+    let three_hours = 3 * 60 * 60;
+
+    cache_connection
+        .set_ex::<String, i32, ()>(format!("sessions/{}", session_id), user.id, three_hours)
+        .await
+        .map_err(|error| server_error(error.into()))?;
+
+    Ok(json!({"token":session_id}))
 }
