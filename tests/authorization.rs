@@ -27,7 +27,7 @@ fn test_login() {
     let response = client
         .post(format!("{}/login", APP_HOST))
         .json(&json!({
-            "usename": "test_admin",
+            "username": "test_admin",
             "password": "1234"
         }))
         .send()
