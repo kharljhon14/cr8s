@@ -76,7 +76,7 @@ impl ToSql<Text, Pg> for RoleCode {
         &'b self,
         out: &mut diesel::serialize::Output<'b, '_, Pg>,
     ) -> diesel::serialize::Result {
-        match self {
+        let _ = match self {
             RoleCode::Admin => out.write_all(b"admin"),
             RoleCode::Editor => out.write_all(b"editor"),
             RoleCode::Viewer => out.write_all(b"viewer"),
