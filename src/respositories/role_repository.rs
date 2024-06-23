@@ -3,7 +3,7 @@ use diesel_async::{AsyncPgConnection, RunQueryDsl};
 
 use crate::{
     models::{
-        roles::{NewRole, Role},
+        roles::{NewRole, Role, RoleCode},
         user_roles::UserRole,
         users::User,
     },
@@ -51,7 +51,7 @@ impl RoleRepository {
 
     pub async fn find_by_code(
         connection: &mut AsyncPgConnection,
-        code: String,
+        code: &RoleCode,
     ) -> QueryResult<Role> {
         roles::table
             .filter(roles::code.eq(code))
