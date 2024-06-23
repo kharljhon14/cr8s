@@ -7,7 +7,10 @@ use rocket_db_pools::Connection;
 
 use crate::{
     helpers::route::{server_error, DbConnection},
-    models::crates::{Crate, NewCrate},
+    models::{
+        crates::{Crate, NewCrate},
+        users::User,
+    },
     respositories::crate_repository::CratesRespository,
 };
 
@@ -16,6 +19,7 @@ use crate::{
 #[rocket::get("/crates")]
 pub async fn get_crates(
     mut db_connection: Connection<DbConnection>,
+    _user: User,
 ) -> Result<Value, Custom<Value>> {
     let limit = 100;
     CratesRespository::find_multiple(&mut db_connection, limit)
@@ -30,6 +34,7 @@ pub async fn get_crates(
 pub async fn get_crate(
     mut db_connection: Connection<DbConnection>,
     id: i32,
+    _user: User,
 ) -> Result<Value, Custom<Value>> {
     CratesRespository::find(&mut db_connection, id)
         .await
@@ -42,6 +47,7 @@ pub async fn get_crate(
 #[rocket::post("/crates", format = "json", data = "<new_crate>")]
 pub async fn create_crate(
     mut db_connection: Connection<DbConnection>,
+    _user: User,
     new_crate: Json<NewCrate>,
 ) -> Result<Custom<Value>, Custom<Value>> {
     CratesRespository::create(&mut db_connection, new_crate.into_inner())
@@ -56,6 +62,7 @@ pub async fn create_crate(
 pub async fn update_crate(
     mut db_connection: Connection<DbConnection>,
     id: i32,
+    _user: User,
     a_crate: Json<Crate>,
 ) -> Result<Value, Custom<Value>> {
     CratesRespository::update(&mut db_connection, id, a_crate.into_inner())
@@ -70,6 +77,7 @@ pub async fn update_crate(
 pub async fn delete_crate(
     mut db_connection: Connection<DbConnection>,
     id: i32,
+    _user: User,
 ) -> Result<NoContent, Custom<Value>> {
     CratesRespository::delete(&mut db_connection, id)
         .await
