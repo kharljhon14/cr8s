@@ -1,12 +1,12 @@
 use common::APP_HOST;
-use reqwest::{blocking::Client, StatusCode};
+use reqwest::StatusCode;
 use serde_json::{json, Value};
 
 pub mod common;
 
 #[test]
 fn test_get_rustaceans() {
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
 
     let response = client
@@ -25,7 +25,7 @@ fn test_get_rustaceans() {
 
 #[test]
 fn test_create_rustacean() {
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let response = client
         .post(format!("{}/rustaceans", APP_HOST))
         .json(&json!({
@@ -53,7 +53,7 @@ fn test_create_rustacean() {
 
 #[test]
 fn test_get_rustacean() {
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
 
     let response = client
@@ -77,7 +77,7 @@ fn test_get_rustacean() {
 
 #[test]
 fn test_update_rustacean() {
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
 
     let response = client
@@ -107,7 +107,7 @@ fn test_update_rustacean() {
 
 #[test]
 fn test_delete_rustacean() {
-    let client = Client::new();
+    let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
 
     let response = client
