@@ -47,8 +47,8 @@ pub async fn get_crate(
 #[rocket::post("/crates", format = "json", data = "<new_crate>")]
 pub async fn create_crate(
     mut db_connection: Connection<DbConnection>,
-    _user: User,
     new_crate: Json<NewCrate>,
+    _user: User,
 ) -> Result<Custom<Value>, Custom<Value>> {
     CratesRespository::create(&mut db_connection, new_crate.into_inner())
         .await
@@ -62,8 +62,8 @@ pub async fn create_crate(
 pub async fn update_crate(
     mut db_connection: Connection<DbConnection>,
     id: i32,
-    _user: User,
     a_crate: Json<Crate>,
+    _user: User,
 ) -> Result<Value, Custom<Value>> {
     CratesRespository::update(&mut db_connection, id, a_crate.into_inner())
         .await

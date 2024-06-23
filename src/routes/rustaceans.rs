@@ -8,16 +8,16 @@ use rocket_db_pools::Connection;
 use crate::{
     helpers::route::{server_error, DbConnection},
     models::rustaceans::{NewRustacean, Rustacean},
+    models::users::User,
     respositories::rustacean_repository::RustaceanRepository,
 };
-
-// Todo: Update error messages
 
 // Get multiple rustaceans endpoint
 
 #[rocket::get("/rustaceans")]
 pub async fn get_rustaceans(
     mut db_connection: Connection<DbConnection>,
+    _user: User,
 ) -> Result<Value, Custom<Value>> {
     let limit = 100;
 
@@ -33,6 +33,7 @@ pub async fn get_rustaceans(
 pub async fn get_rustacean(
     mut db_connection: Connection<DbConnection>,
     id: i32,
+    _user: User,
 ) -> Result<Value, Custom<Value>> {
     RustaceanRepository::find(&mut db_connection, id)
         .await
@@ -46,6 +47,7 @@ pub async fn get_rustacean(
 pub async fn create_rustacean(
     mut db_connection: Connection<DbConnection>,
     new_rustacean: Json<NewRustacean>,
+    _user: User,
 ) -> Result<Custom<Value>, Custom<Value>> {
     RustaceanRepository::create(&mut db_connection, new_rustacean.into_inner())
         .await
@@ -60,6 +62,7 @@ pub async fn update_rustacean(
     mut db_connection: Connection<DbConnection>,
     id: i32,
     rustacean: Json<Rustacean>,
+    _user: User,
 ) -> Result<Value, Custom<Value>> {
     RustaceanRepository::update(&mut db_connection, id, rustacean.into_inner())
         .await
@@ -73,6 +76,7 @@ pub async fn update_rustacean(
 pub async fn delete_rustacean(
     mut db_connection: Connection<DbConnection>,
     id: i32,
+    _user: User,
 ) -> Result<NoContent, Custom<Value>> {
     RustaceanRepository::delete(&mut db_connection, id)
         .await
