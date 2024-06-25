@@ -10,16 +10,16 @@ pub static APP_HOST: &'static str = "http://127.0.0.1:8000";
 
 // Client common functions
 
-pub fn get_client_with_logged_in_admin() -> Client {
+pub fn get_logged_in_client(username: &str, role: &str) -> Client {
     let _ = Command::new("cargo")
         .arg("run")
         .arg("--bin")
         .arg("cli")
         .arg("users")
         .arg("create")
-        .arg("test_admin")
+        .arg(username)
         .arg("1234")
-        .arg("admin")
+        .arg(role)
         .output()
         .unwrap();
 
@@ -27,7 +27,7 @@ pub fn get_client_with_logged_in_admin() -> Client {
     let response = client
         .post(format!("{}/login", APP_HOST))
         .json(&json!({
-            "username": "test_admin",
+            "username": username,
             "password": "1234"
         }))
         .send()
@@ -54,6 +54,14 @@ pub fn get_client_with_logged_in_admin() -> Client {
         .default_headers(headers)
         .build()
         .unwrap()
+}
+
+pub fn get_client_with_logged_in_viewer() -> Client {
+    get_logged_in_client("test_viewer", "viewer")
+}
+
+pub fn get_client_with_logged_in_admin() -> Client {
+    get_logged_in_client("test_admin", "admin")
 }
 
 // Rustaceans common functions
