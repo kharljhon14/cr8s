@@ -37,13 +37,13 @@ impl RoleRepository {
         connection: &mut AsyncPgConnection,
         user: &User,
     ) -> QueryResult<Vec<Role>> {
-        let user_roles: Vec<UserRole> = UserRole::belonging_to(&user)
+        let user_roles = UserRole::belonging_to(&user)
             .get_results(connection)
             .await?;
 
         let role_ids: Vec<i32> = user_roles
             .iter()
-            .map(|user_role: &UserRole| user_role.id)
+            .map(|user_role: &UserRole| user_role.role_id)
             .collect();
 
         Self::find_by_ids(connection, role_ids).await

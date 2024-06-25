@@ -7,10 +7,7 @@ use rocket_db_pools::Connection;
 
 use crate::{
     helpers::route::{server_error, DbConnection, EditorUser},
-    models::{
-        crates::{Crate, NewCrate},
-        users::User,
-    },
+    models::crates::{Crate, NewCrate},
     respositories::crate_repository::CratesRespository,
 };
 
@@ -19,7 +16,7 @@ use crate::{
 #[rocket::get("/crates")]
 pub async fn get_crates(
     mut db_connection: Connection<DbConnection>,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<Value, Custom<Value>> {
     let limit = 100;
     CratesRespository::find_multiple(&mut db_connection, limit)
@@ -34,7 +31,7 @@ pub async fn get_crates(
 pub async fn get_crate(
     mut db_connection: Connection<DbConnection>,
     id: i32,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<Value, Custom<Value>> {
     CratesRespository::find(&mut db_connection, id)
         .await
