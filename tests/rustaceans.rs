@@ -9,6 +9,8 @@ fn test_get_rustaceans() {
     let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
 
+    let client = common::get_client_with_logged_in_viewer();
+
     let response = client
         .get(format!("{}/rustaceans", APP_HOST))
         .send()
@@ -20,6 +22,7 @@ fn test_get_rustaceans() {
 
     assert!(json.as_array().unwrap().contains(&rustacean));
 
+    let client = common::get_client_with_logged_in_admin();
     common::delete_test_rustacean(&client, rustacean);
 }
 
@@ -56,6 +59,7 @@ fn test_get_rustacean() {
     let client = common::get_client_with_logged_in_admin();
     let rustacean = common::create_test_rustacean(&client);
 
+    let client = common::get_client_with_logged_in_viewer();
     let response = client
         .get(format!("{}/rustaceans/{}", APP_HOST, rustacean["id"]))
         .send()
@@ -72,6 +76,8 @@ fn test_get_rustacean() {
             "created_at": rustacean["created_at"],
         })
     );
+
+    let client = common::get_client_with_logged_in_admin();
     common::delete_test_rustacean(&client, rustacean);
 }
 

@@ -47,6 +47,7 @@ fn test_get_crates() {
     let rustacean = common::create_test_rustacean(&client);
     let a_crate = common::create_test_crate(&client, &rustacean);
 
+    let client = common::get_client_with_logged_in_viewer();
     let response = client
         .get(format!("{}/crates", APP_HOST))
         .send()
@@ -58,6 +59,7 @@ fn test_get_crates() {
 
     assert!(json.as_array().contains(&a_crate));
 
+    let client = common::get_client_with_logged_in_admin();
     common::delete_test_crate(&client, a_crate);
     common::delete_test_rustacean(&client, rustacean);
 }
@@ -68,6 +70,8 @@ fn test_get_crate() {
     let rustacean = common::create_test_rustacean(&client);
 
     let a_crate = common::create_test_crate(&client, &rustacean);
+
+    let client = common::get_client_with_logged_in_viewer();
 
     let response = client
         .get(format!("{}/crates/{}", APP_HOST, a_crate["id"]))
@@ -91,6 +95,7 @@ fn test_get_crate() {
         }))
     );
 
+    let client = common::get_client_with_logged_in_admin();
     common::delete_test_crate(&client, a_crate);
     common::delete_test_rustacean(&client, rustacean);
 }
