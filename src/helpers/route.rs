@@ -79,6 +79,7 @@ impl<'r> FromRequest<'r> for EditorUser {
             .guard::<User>()
             .await
             .expect("Cannot retrieve current logged in user");
+        rocket::info!("User info {:?}", user);
 
         let mut db_connection = req
             .guard::<Connection<DbConnection>>()
