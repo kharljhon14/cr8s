@@ -6,9 +6,8 @@ use rocket::{
 use rocket_db_pools::Connection;
 
 use crate::{
-    helpers::route::{server_error, DbConnection},
-    models::rustaceans::{NewRustacean, Rustacean},
-    models::users::User,
+    helpers::route::{server_error, DbConnection, EditorUser},
+    models::{rustaceans::{NewRustacean, Rustacean}, users::User},
     respositories::rustacean_repository::RustaceanRepository,
 };
 
@@ -47,7 +46,7 @@ pub async fn get_rustacean(
 pub async fn create_rustacean(
     mut db_connection: Connection<DbConnection>,
     new_rustacean: Json<NewRustacean>,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<Custom<Value>, Custom<Value>> {
     RustaceanRepository::create(&mut db_connection, new_rustacean.into_inner())
         .await
@@ -62,7 +61,7 @@ pub async fn update_rustacean(
     mut db_connection: Connection<DbConnection>,
     id: i32,
     rustacean: Json<Rustacean>,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<Value, Custom<Value>> {
     RustaceanRepository::update(&mut db_connection, id, rustacean.into_inner())
         .await
@@ -76,7 +75,7 @@ pub async fn update_rustacean(
 pub async fn delete_rustacean(
     mut db_connection: Connection<DbConnection>,
     id: i32,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<NoContent, Custom<Value>> {
     RustaceanRepository::delete(&mut db_connection, id)
         .await
