@@ -1,12 +1,26 @@
 use std::str::FromStr;
 
+use chrono::{Datelike, Utc};
 use diesel_async::{AsyncConnection, AsyncPgConnection};
+use lettre::{
+    message::{header::ContentType, MessageBuilder},
+    transport::smtp::authentication::Credentials,
+    SmtpTransport, Transport,
+};
+use tera::{Context, Tera};
 
 use crate::{
     helpers::auth::hash_password,
     models::{roles::RoleCode, users::NewUser},
-    respositories::{role_repository::RoleRepository, user_repository::UserRepository},
+    respositories::{
+        crate_repository::CratesRespository, role_repository::RoleRepository,
+        user_repository::UserRepository,
+    },
 };
+
+fn load_template_engine() -> Tera {
+    Tera::new("templates/**/*.html").expect("Cannont load template engine")
+}
 
 async fn load_db_connection() -> AsyncPgConnection {
     let database_url = std::env::var("DATABASE_URL").expect("Cannot retrived DB url from env");
@@ -63,4 +77,46 @@ pub async fn delete_user(id: i32) {
     UserRepository::delete(&mut connection, id).await.unwrap();
 
     println!("User with ID: {} is deleted", id);
+}
+
+pub async fn digest_send(email: String, hours_since: i32) {
+    let mut connection = load_db_connection().await;
+    let tera = load_template_engine();
+
+    let crates = CratesRespository::find_since(&mut connection, hours_since)
+        .await
+        .unwrap();
+
+    if crates.len() > 0 {
+        let year = Utc::now().year();
+        let mut context = Context::new();
+
+        context.insert("crates", &crates);
+        context.insert("year", &year);
+
+        let html_body = tera.render("email/digest.html", &context).unwrap();
+
+        let message = MessageBuilder::new()
+            .subject("Cr8s Digest")
+            .from("Cr8s <noreply@cr8s.com>".parse().unwrap())
+            .to(email.parse().unwrap())
+            .header(ContentType::TEXT_HTML)
+            .body(html_body)
+            .unwrap();
+
+        let smtp_host = std::env::var("SMTP_HOST").expect("Cannot retrived SMTP host from env");
+        let smtp_username =
+            std::env::var("SMTP_USERNAME").expect("Cannot retrived SMTP username from env");
+        let smtp_password =
+            std::env::var("SMTP_PASSWORD").expect("Cannot retrived SMTP password from env");
+
+        let credentials = Credentials::new(smtp_username, smtp_password);
+
+        let mailer = SmtpTransport::relay(&smtp_host)
+            .unwrap()
+            .credentials(credentials)
+            .build();
+
+        mailer.send(&message).unwrap();
+    }
 }
