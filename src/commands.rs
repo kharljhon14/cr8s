@@ -104,6 +104,8 @@ pub async fn digest_send(email: String, hours_since: i32) {
             smtp_password,
         };
 
-        mailer.send(email, "email/digest.html", context).unwrap();
+        mailer
+            .send("Cr8s Digest", email, "email/digest.html", context)
+            .unwrap();
     }
 }

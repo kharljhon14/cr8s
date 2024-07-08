@@ -17,6 +17,7 @@ pub struct HtmlMailer {
 impl HtmlMailer {
     pub fn send(
         self,
+        subject: &str,
         to: String,
         template_name: &str,
         template_context: Context,
@@ -26,7 +27,7 @@ impl HtmlMailer {
             .render(template_name, &template_context)?;
 
         let message = MessageBuilder::new()
-            .subject("Cr8s Digest")
+            .subject(subject)
             .from("Cr8s <noreply@cr8s.com>".parse()?)
             .to(to.parse()?)
             .header(ContentType::TEXT_HTML)
