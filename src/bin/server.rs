@@ -21,6 +21,7 @@ async fn main() {
                 cr8s::routes::crates::delete_crate
             ],
         )
+        .attach(cr8s::routes::cors::Cors)
         .attach(cr8s::helpers::route::CacheConnection::init())
         .attach(cr8s::helpers::route::DbConnection::init())
         .launch()
