@@ -8,11 +8,14 @@ use rocket::{
     Request,
 };
 
+use tera::Tera;
+
 use serde_json::Value;
 
 use rocket_db_pools::{deadpool_redis::redis::AsyncCommands, Connection, Database};
 
 use crate::{
+    mail::HtmlMailer,
     models::{roles::RoleCode, users::User},
     respositories::{role_repository::RoleRepository, user_repository::UserRepository},
 };
@@ -103,5 +106,30 @@ impl<'r> FromRequest<'r> for EditorUser {
         }
 
         Outcome::Error((Status::Unauthorized, ()))
+    }
+}
+
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for HtmlMailer {
+    type Error = ();
+
+    async fn from_request(_req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
+        if let Ok(tera) = Tera::new("templates/**/*.html") {
+            let smtp_host = std::env::var("SMTP_HOST").expect("Cannot retrived SMTP host from env");
+            let smtp_username =
+                std::env::var("SMTP_USERNAME").expect("Cannot retrived SMTP username from env");
+            let smtp_password =
+                std::env::var("SMTP_PASSWORD").expect("Cannot retrived SMTP password from env");
+
+            let mailer = HtmlMailer {
+                template_engine: tera,
+                smtp_host,
+                smtp_username,
+                smtp_password,
+            };
+
+            return Outcome::Success(mailer);
+        }
+        Outcome::Error((Status::InternalServerError, ()))
     }
 }
